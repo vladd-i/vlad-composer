@@ -31,6 +31,7 @@ class develop(develop_orig):
 # From https://github.com/pypa/pip/issues/7953#issuecomment-645133255
 site.ENABLE_USER_SITE = _IS_USER
 
+
 def package_files(prefix: str, directory: str, extension: str):
     # from https://stackoverflow.com/a/36693250
     paths = []
@@ -39,6 +40,7 @@ def package_files(prefix: str, directory: str, extension: str):
             if filename.endswith(extension):
                 paths.append(os.path.relpath(os.path.join(path, filename), prefix))
     return paths
+
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -146,7 +148,8 @@ extra_deps["nlp"] = [
 ]
 
 extra_deps["streaming"] = [
-    "boto3==1.21.40",
+    "boto3>=1.21.45",
+    "paramiko>=2.10.3",
 ]
 
 extra_deps["webdataset"] = [
