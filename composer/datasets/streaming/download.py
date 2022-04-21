@@ -35,7 +35,27 @@ def download_from_s3(remote: str, local: str) -> None:
     obj = urlparse(remote)
     assert obj.scheme == 's3'
     s3 = boto3.client('s3')
-    s3.download_file(obj.netloc, obj.path[1:], local)
+    s3.download_file(obj.netloc, obj.path.lstrip('/'), local)
+
+
+def download_from_sftp(remote: str, local: str) -> None:
+    """Download a file from remote to local.
+
+    Args:
+        remote (str): Remote path (SFTP).
+        local (str): Local path (local filesystem).
+    """
+    from paramiko import RSAKey, SFTPClient, Transport
+
+    obj = urlparse(remote)
+
+    pkey = RSAKey.from_private_key_file('path/to/private_key')
+    transport = Transport(sock=(obj.netloc, 22))
+    transport.connect(username='username', pkey=pkey)
+    connection = SFTPClient.from_transport(transport)
+    connection.get(obj.path, local)
+    connection.close()
+    transport.close()
 
 
 def download_from_local(remote: str, local: str) -> None:
@@ -59,6 +79,8 @@ def download(remote: str, local: str) -> None:
     os.makedirs(local_dir, exist_ok=True)
     if remote.startswith('s3://'):
         download_from_s3(remote, local)
+    elif remote.startswith('sftp://'):
+        download_from_sftp(remote, local)
     else:
         download_from_local(remote, local)
 
