@@ -9,14 +9,15 @@ from composer.datasets.utils import NormalizationFn, pil_image_collate
 
 
 @pytest.mark.timeout(100)
+@pytest.mark.parametrize("num_workers", [0, 1, 8, 64])
 @pytest.mark.parametrize("protocol", ["s3", "sftp"])
-@pytest.mark.parametrize("num_workers", [0, 1, 8])
-def test_download_speed(protocol, num_workers):
+@pytest.mark.parametrize("split", ["train", "val"])
+def test_download_speed(num_workers, protocol, split):
     protocol_remote_dict = {
         "s3":
-            "s3://mosaicml-internal-dataset-ade20k/mds/val",
+            f"s3://mosaicml-internal-dataset-ade20k/mds/{split}",
         "sftp":
-            "sftp://s-d26bfe922c2141cca.server.transfer.us-west-2.amazonaws.com/mosaicml-internal-dataset-ade20k/mds/val",
+            f"sftp://s-d26bfe922c2141cca.server.transfer.us-west-2.amazonaws.com/mosaicml-internal-dataset-ade20k/mds/{split}",
     }
     remote = protocol_remote_dict[protocol]
     tmpdir = tempfile.TemporaryDirectory()
