@@ -1,5 +1,5 @@
 import os
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, Optional, Sequence
 
 from tqdm import tqdm
 
@@ -10,7 +10,7 @@ from composer.datasets.streaming.format import (StreamingDatasetIndex, get_index
 class StreamingDatasetWriter(object):
     """Writes StreamingDatasets."""
 
-    def __init__(self, dirname: str, fields: List[str], shard_size_limit: int = 1 << 24) -> None:
+    def __init__(self, dirname: str, fields: Sequence[str], shard_size_limit: int = 1 << 24) -> None:
         """Initialize with the given output dirname.
 
         Args:
