@@ -8,7 +8,7 @@ from composer.datasets.c4 import C4DatasetHparams
 from composer.datasets.cifar import (CIFAR10DatasetHparams, CIFAR10WebDatasetHparams, CIFAR20WebDatasetHparams,
                                      CIFAR100WebDatasetHparams, StreamingCIFAR10Hparams, StreamingCIFAR20Hparams,
                                      StreamingCIFAR100Hparams)
-from composer.datasets.coco import COCODatasetHparams
+from composer.datasets.coco import COCODatasetHparams, StreamingCOCOHparams
 from composer.datasets.glue import GLUEHparams
 from composer.datasets.imagenet import (Imagenet1kWebDatasetHparams, ImagenetDatasetHparams, StreamingImagenet1kHparams,
                                         StreamingTinyImagenet200Hparams, TinyImagenet200WebDatasetHparams)
@@ -39,6 +39,7 @@ registry = {
     'streaming_tinyimagenet200': StreamingTinyImagenet200Hparams,
     'streaming_imagenet1k': StreamingImagenet1kHparams,
     'streaming_ade20k': StreamingADE20kHparams,
+    'streaming_coco': StreamingCOCOHparams,
 }
 
 
