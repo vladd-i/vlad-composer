@@ -1,5 +1,5 @@
 import os
-from typing import Dict, Iterable, Optional, Sequence
+from typing import Dict, Iterable, List, Optional, Sequence
 
 from tqdm import tqdm
 
