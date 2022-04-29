@@ -264,7 +264,7 @@ class StreamingCOCOHparams(StreamingDatasetHparams):
     """
 
     remote: str = hp.optional('Remote directory (S3 or local filesystem) where dataset is stored',
-                              default='s3://mosaicml-internal-dataset-cifar10/mds-coco/')  # TODO: get a bucket.
+                              default='s3://mosaicml-internal-dataset-coco/mds/')
     local: str = hp.optional('Local filesystem directory where dataset is cached during operation',
                              default='/tmp/mds-cache/mds-coco/')
 
