@@ -158,6 +158,7 @@ def generate_dummy_model_config(cls: Type[hp.Hparams], tokenizer) -> Dict[str, A
             "model_type": "bert",
             "num_attention_heads": 1,
             "num_hidden_layers": 1,
+            "num_labels": tokenizer.vocab_size,
             "pad_token_id": tokenizer.pad_token_id,
             "position_embedding_type": "absolute",
             "transformers_version": "4.6.0.dev0",
