@@ -3,8 +3,8 @@ train_dataset:
     is_train: true
     datadir: /datasets/coco
     download: false
-    shuffle: false
-    drop_last: false
+    shuffle: true
+    drop_last: true
 val_dataset:
   coco:
     is_train: false
