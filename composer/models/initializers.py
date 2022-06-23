@@ -20,6 +20,8 @@ class Initializer(StringEnum):
     XAVIER_UNIFORM = 'xavier_uniform'
     XAVIER_NORMAL = 'xavier_normal'
     LINEAR_LOG_CONSTANT_BIAS = 'linear_log_constant_bias'
+    FC_HACK = 'fc_hack'  # MLPerf hacking
+    OTHER_HACK = 'other_hack'
 
     def get_initializer(self) -> Callable[[torch.nn.Module], None]:
         """Get the initializer function.
@@ -58,6 +60,19 @@ class Initializer(StringEnum):
             if isinstance(w, torch.nn.Linear):
                 w.bias.data = torch.ones(w.bias.shape) * -torch.log(torch.tensor(w.bias.shape[0]))
 
+        def fc_hack(w: nn.Module):  # MLPerf hacking
+            if isinstance(w, torch.nn.Linear):
+                torch.nn.init.normal_(w.weight, mean=0, std=0.01)
+                torch.nn.init.xavier_normal_(w.bias)
+            # if isinstance(w, torch.nn.Linear):
+            #     torch.nn.init.normal_(w.weight, mean=0, std=0.01)
+            #     torch.nn.init.xavier_normal_(w.bias)
+
+        def other_hack(w: nn.Module):
+            if not isinstance(w, torch.nn.Linear):
+                torch.nn.init.xavier_normal_(w.weight)
+                torch.nn.init.xavier_normal_(w.bias)
+
         initializer_dict = {
             'kaiming_normal': kaiming_normal,
             'kaiming_uniform': kaiming_uniform,
@@ -65,7 +80,9 @@ class Initializer(StringEnum):
             'bn_ones': bn_ones,
             'xavier_uniform': xavier_uniform,
             'xavier_normal': xavier_normal,
-            'linear_log_constant_bias': linear_log_constant_bias
+            'linear_log_constant_bias': linear_log_constant_bias,
+            'fc_hack': fc_hack,
+            'other_hack': other_hack
         }
         if self.value not in initializer_dict:
             raise ValueError(f"Initializer '{self.value}' not found.")
