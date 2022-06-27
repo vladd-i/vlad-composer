@@ -48,6 +48,7 @@ components of training.
     ~speed_monitor.SpeedMonitor
     ~lr_monitor.LRMonitor
     ~grad_monitor.GradMonitor
+    ~weight_monitor.WeightMonitor
     ~memory_monitor.MemoryMonitor
 
 
