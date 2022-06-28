@@ -70,24 +70,27 @@ class Initializer(StringEnum):
                 # initialize FC biases equivalently to NVIDIA's 
                 # mx.init.Xavier(rnd_type='gaussian', factor_type="in", magnitude=2) 
                 # assuming fan_in = 1 for bias
-                if w.bias is not None:
+                if w.bias is not None: # because bias is optional and can be None
                     std = math.sqrt(2.0)
                     torch.nn.init._no_grad_normal_(w.bias, 0., std)
 
         def other_hack(w: nn.Module): # MLPerf hacking
             # First make sure that works at least for BatchNorm and Conv2d, then extend to all non-FC layers
-            # if not isinstance(w, torch.nn.Linear):
-            if isinstance(w, torch.nn.BatchNorm2d) or isinstance(w, torch.nn.Conv2d):
+            # if isinstance(w, torch.nn.BatchNorm2d) or isinstance(w, torch.nn.Conv2d):
+            if not isinstance(w, torch.nn.Linear):
                 # initialize other layers' weights equivalently to NVIDIA's 
                 # mx.init.Xavier(rnd_type='gaussian', factor_type="in", magnitude=2) 
-                fan_in, _ = torch.nn.init._calculate_fan_in_and_fan_out(w.weight)
+                if w.weight.dim() == 1: # because BatchNorm2d weights are 1d
+                    fan_in = 1
+                else:
+                    fan_in, _ = torch.nn.init._calculate_fan_in_and_fan_out(w.weight)
                 std = math.sqrt(2.0 / float(fan_in))
                 torch.nn.init._no_grad_normal_(w.weight, 0., std)
 
                 # initialize other layers' biases equivalently to NVIDIA's 
                 # mx.init.Xavier(rnd_type='gaussian', factor_type="in", magnitude=2) 
                 # assuming fan_in = 1 for bias
-                if w.bias is not None:
+                if w.bias is not None: # because bias is optional and can be None
                     std = math.sqrt(2.0)
                     torch.nn.init._no_grad_normal_(w.bias, 0., std)
 
