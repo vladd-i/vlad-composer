@@ -80,7 +80,7 @@ class Initializer(StringEnum):
                 # mx.init.Xavier(rnd_type='gaussian', factor_type="in", magnitude=2) 
                 fan_in, _ = torch.nn.init._calculate_fan_in_and_fan_out(w.weight)
                 std = math.sqrt(2.0 / float(fan_in))
-                torch.nn.init._no_grad_normal_(w.bias, 0., std)
+                torch.nn.init._no_grad_normal_(w.weight, 0., std)
 
                 # initialize other layers' biases equivalently to NVIDIA's 
                 # mx.init.Xavier(rnd_type='gaussian', factor_type="in", magnitude=2) 
