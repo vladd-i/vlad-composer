@@ -8,6 +8,8 @@ from typing import Callable
 import torch
 from torch import nn as nn
 
+import math
+
 from composer.utils import StringEnum
 
 
@@ -62,17 +64,28 @@ class Initializer(StringEnum):
 
         def fc_hack(w: nn.Module):  # MLPerf hacking
             if isinstance(w, torch.nn.Linear):
+                # initialize FC weights with Normal(0, 0.01)
                 torch.nn.init.normal_(w.weight, mean=0, std=0.01)
-                if w.bias is not None:
-                    torch.nn.init.xavier_normal_(w.bias.data)
-                # w.bias.data = torch.zeros_like(w.bias.data) # if Xavier Normal initialization of biases doesn't work
+
+                # initialize FC biases equivalently to NVIDIA's 
+                # mx.init.Xavier(rnd_type='gaussian', factor_type="in", magnitude=2) 
+                # assuming fan_in = 1 for bias
+                std = math.sqrt(2.0)
+                torch.nn.init._no_grad_normal_(w.bias, 0., std)
 
         def other_hack(w: nn.Module): # MLPerf hacking
             if not isinstance(w, torch.nn.Linear):
-                torch.nn.init.xavier_normal_(w.weight)
-                if w.bias is not None:
-                    torch.nn.init.xavier_normal_(w.bias.data)
-                # w.bias.data = torch.zeros_like(w.bias.data) # if Xavier Normal initialization of biases doesn't work
+                # initialize other layers' weights equivalently to NVIDIA's 
+                # mx.init.Xavier(rnd_type='gaussian', factor_type="in", magnitude=2) 
+                fan_in, _ = torch.nn.init._calculate_fan_in_and_fan_out(w.weight)
+                std = math.sqrt(2.0 / float(fan_in))
+                torch.nn.init._no_grad_normal_(w.bias, 0., std)
+
+                # initialize other layers' biases equivalently to NVIDIA's 
+                # mx.init.Xavier(rnd_type='gaussian', factor_type="in", magnitude=2) 
+                # assuming fan_in = 1 for bias
+                std = math.sqrt(2.0)
+                torch.nn.init._no_grad_normal_(w.bias, 0., std)
 
         initializer_dict = {
             'kaiming_normal': kaiming_normal,
