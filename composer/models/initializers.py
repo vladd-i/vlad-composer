@@ -21,7 +21,7 @@ class Initializer(StringEnum):
     XAVIER_NORMAL = 'xavier_normal'
     LINEAR_LOG_CONSTANT_BIAS = 'linear_log_constant_bias'
     FC_HACK = 'fc_hack'  # MLPerf hacking
-    OTHER_HACK = 'other_hack'
+    OTHER_HACK = 'other_hack' # MLPerf hacking
 
     def get_initializer(self) -> Callable[[torch.nn.Module], None]:
         """Get the initializer function.
@@ -63,15 +63,16 @@ class Initializer(StringEnum):
         def fc_hack(w: nn.Module):  # MLPerf hacking
             if isinstance(w, torch.nn.Linear):
                 torch.nn.init.normal_(w.weight, mean=0, std=0.01)
-                w.bias.data = torch.zeros_like(w.bias.data)
-            # if isinstance(w, torch.nn.Linear):
-            #     torch.nn.init.normal_(w.weight, mean=0, std=0.01)
-            #     torch.nn.init.xavier_normal_(w.bias)
+                if w.bias is not None:
+                    torch.nn.init.xavier_normal_(w.bias.data)
+                # w.bias.data = torch.zeros_like(w.bias.data) # if Xavier Normal initialization of biases doesn't work
 
-        def other_hack(w: nn.Module):
-            if isinstance(w, torch.nn.Linear):
+        def other_hack(w: nn.Module): # MLPerf hacking
+            if not isinstance(w, torch.nn.Linear):
                 torch.nn.init.xavier_normal_(w.weight)
-                w.bias.data = torch.zeros_like(w.bias.data)
+                if w.bias is not None:
+                    torch.nn.init.xavier_normal_(w.bias.data)
+                # w.bias.data = torch.zeros_like(w.bias.data) # if Xavier Normal initialization of biases doesn't work
 
         initializer_dict = {
             'kaiming_normal': kaiming_normal,
