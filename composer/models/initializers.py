@@ -75,7 +75,8 @@ class Initializer(StringEnum):
                     torch.nn.init._no_grad_normal_(w.bias, 0., std)
 
         def other_hack(w: nn.Module): # MLPerf hacking
-            if not isinstance(w, torch.nn.Linear):
+            # if not isinstance(w, torch.nn.Linear):
+            if isinstance(w, torch.nn.BatchNorm2d) or isinstance(w, torch.nn.Conv2d):
                 # initialize other layers' weights equivalently to NVIDIA's 
                 # mx.init.Xavier(rnd_type='gaussian', factor_type="in", magnitude=2) 
                 fan_in, _ = torch.nn.init._calculate_fan_in_and_fan_out(w.weight)
