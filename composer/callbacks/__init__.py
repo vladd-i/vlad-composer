@@ -9,7 +9,7 @@ examples for writing your own callbacks at the :class:`.Callback` base class.
 from composer.callbacks.checkpoint_saver import CheckpointSaver
 from composer.callbacks.early_stopper import EarlyStopper
 from composer.callbacks.grad_monitor import GradMonitor
-from composer.callbacks.weight_monitor import WeightMonitor # Hack
+from composer.callbacks.norm_monitor import NormMonitor # MLPerf hacking
 from composer.callbacks.lr_monitor import LRMonitor
 from composer.callbacks.memory_monitor import MemoryMonitor
 from composer.callbacks.mlperf import MLPerfCallback
@@ -18,7 +18,7 @@ from composer.callbacks.threshold_stopper import ThresholdStopper
 
 __all__ = [
     'GradMonitor',
-    'WeightMonitor', # Hack
+    'NormMonitor', # MLPerf hacking
     'LRMonitor',
     'MemoryMonitor',
     'SpeedMonitor',

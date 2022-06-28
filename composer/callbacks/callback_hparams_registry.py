@@ -10,7 +10,7 @@ import yahp as hp
 from composer.callbacks.checkpoint_saver import CheckpointSaver
 from composer.callbacks.early_stopper import EarlyStopper
 from composer.callbacks.grad_monitor import GradMonitor
-from composer.callbacks.weight_monitor import WeightMonitor
+from composer.callbacks.norm_monitor import NormMonitor
 from composer.callbacks.lr_monitor import LRMonitor
 from composer.callbacks.memory_monitor import MemoryMonitor
 from composer.callbacks.mlperf import MLPerfCallback
@@ -23,7 +23,7 @@ callback_registry: Dict[str, Union[Type[Callback], Type[hp.Hparams]]] = {
     'speed_monitor': SpeedMonitor,
     'lr_monitor': LRMonitor,
     'grad_monitor': GradMonitor,
-    'weight_monitor': WeightMonitor,
+    'norm_monitor': NormMonitor,
     'memory_monitor': MemoryMonitor,
     'mlperf': MLPerfCallback,
     'early_stopper': EarlyStopper,
