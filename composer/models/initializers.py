@@ -75,6 +75,7 @@ class Initializer(StringEnum):
                     torch.nn.init._no_grad_normal_(w.bias, 0., std)
 
         def other_hack(w: nn.Module): # MLPerf hacking
+            # First make sure that works at least for BatchNorm and Conv2d, then extend to all non-FC layers
             # if not isinstance(w, torch.nn.Linear):
             if isinstance(w, torch.nn.BatchNorm2d) or isinstance(w, torch.nn.Conv2d):
                 # initialize other layers' weights equivalently to NVIDIA's 
