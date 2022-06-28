@@ -76,8 +76,8 @@ class Initializer(StringEnum):
 
         def other_hack(w: nn.Module): # MLPerf hacking
             # First make sure that works at least for BatchNorm and Conv2d, then extend to all non-FC layers
-            # if isinstance(w, torch.nn.BatchNorm2d) or isinstance(w, torch.nn.Conv2d):
-            if not isinstance(w, torch.nn.Linear):
+            if isinstance(w, torch.nn.BatchNorm2d) or isinstance(w, torch.nn.Conv2d):
+            # if not isinstance(w, torch.nn.Linear):
                 # initialize other layers' weights equivalently to NVIDIA's 
                 # mx.init.Xavier(rnd_type='gaussian', factor_type="in", magnitude=2) 
                 if w.weight.dim() == 1: # because BatchNorm2d weights are 1d
