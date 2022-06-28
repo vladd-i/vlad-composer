@@ -70,8 +70,9 @@ class Initializer(StringEnum):
                 # initialize FC biases equivalently to NVIDIA's 
                 # mx.init.Xavier(rnd_type='gaussian', factor_type="in", magnitude=2) 
                 # assuming fan_in = 1 for bias
-                std = math.sqrt(2.0)
-                torch.nn.init._no_grad_normal_(w.bias, 0., std)
+                if w.bias is not None:
+                    std = math.sqrt(2.0)
+                    torch.nn.init._no_grad_normal_(w.bias, 0., std)
 
         def other_hack(w: nn.Module): # MLPerf hacking
             if not isinstance(w, torch.nn.Linear):
@@ -84,8 +85,9 @@ class Initializer(StringEnum):
                 # initialize other layers' biases equivalently to NVIDIA's 
                 # mx.init.Xavier(rnd_type='gaussian', factor_type="in", magnitude=2) 
                 # assuming fan_in = 1 for bias
-                std = math.sqrt(2.0)
-                torch.nn.init._no_grad_normal_(w.bias, 0., std)
+                if w.bias is not None:
+                    std = math.sqrt(2.0)
+                    torch.nn.init._no_grad_normal_(w.bias, 0., std)
 
         initializer_dict = {
             'kaiming_normal': kaiming_normal,
