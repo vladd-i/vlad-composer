@@ -29,7 +29,7 @@ class StreamingWiki(StreamingDataset):
     Args:
         remote (str): Remote directory (S3 or local filesystem) where dataset is stored.
         local (str): Local filesystem directory where dataset is cached during operation.
-        # split (str): The dataset split to use, either 'train' or 'val'.
+        split (str): The dataset split to use, either 'train' or 'val'.
         shuffle (bool): Whether to shuffle the samples in this dataset.
         tokenizer_name (str): The name of the HuggingFace tokenizer to use to tokenize samples.
         max_seq_len (int): The max sequence length of each token sample.
@@ -54,11 +54,13 @@ class StreamingWiki(StreamingDataset):
     def __init__(self,
                  remote: str,
                  local: str,
-                 # split: str,
+                 split: str,
                  shuffle: bool,
                  tokenizer_name: str,
                  max_seq_len: int,
                  group_method: str = 'truncate',
+                 max_retries: int = 2,
+                 timeout: float = 120,
                  batch_size: Optional[int] = None):
 
         # HF Transformers is needed to build the tokenizer
@@ -68,8 +70,8 @@ class StreamingWiki(StreamingDataset):
             raise MissingConditionalImportError(extra_deps_group='nlp', conda_package='transformers') from e
 
         # Validation
-        # if split not in ['train', 'val']:
-        #     raise ValueError(f"split='{split}' must be one of ['train', 'val'].")
+        if split not in ['train', 'val']:
+            raise ValueError(f"split='{split}' must be one of ['train', 'val'].")
         if group_method not in ['truncate']:
             raise ValueError(f"Only group_method='truncate' is supported at this time.")
 
@@ -77,10 +79,12 @@ class StreamingWiki(StreamingDataset):
         decoders = {
             'text': self._decode,
         }
-        super().__init__(remote=remote,
-                         local=local,
+        super().__init__(remote=os.path.join(remote, split),
+                         local=os.path.join(local, split),
                          shuffle=shuffle,
                          decoders=decoders,
+                         max_retries=max_retries,
+                         timeout=timeout,
                          batch_size=batch_size)
         self.tokenizer_name = tokenizer_name
         self.max_seq_len = max_seq_len

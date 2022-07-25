@@ -25,22 +25,24 @@ class StreamingWikiHparams(DatasetHparams):
 
     Args:
         remote (str): Remote directory (S3 or local filesystem) where dataset is stored.
-            Default: ``'s3://mosaicml-internal-dataset-enwiki-20200101-train/'``
+            Default: ``'s3://mosaicml-internal-dataset-c4/mds/1/'``
         local (str): Local filesystem directory where dataset is cached during operation.
-            Default: ``'/tmp/mds-cache/mds-enwiki-20200101-train/'``
-        # split (str): What split of the dataset to use. Either ``'train'`` or ``'val'``. Default: ``'train'``.
+            Default: ``'/tmp/mds-cache/mds-c4/'``
+        split (str): What split of the dataset to use. Either ``'train'`` or ``'val'``. Default: ``'train'``.
         tokenizer_name (str): The name of the HuggingFace tokenizer to preprocess text with. Default: ``'bert-base-uncased'``.
         max_seq_len (int): The max sequence length of each token sample. Default: ``512``.
         group_method (str): How to group text samples into token samples. Currently only `truncate` is supported.
         mlm (bool): Whether or not to use masked language modeling. Default: ``False``.
         mlm_probability (float): If ``mlm==True``, the probability that tokens are masked. Default: ``0.15``.
+        max_retries (int): Number of download re-attempts before giving up. Default: 2.
+        timeout (float): How long to wait for shard to download before raising an exception. Default: 120 sec.
     """
 
     remote: str = hp.optional('Remote directory (S3 or local filesystem) where dataset is stored',
-                              default='s3://mosaicml-internal-dataset-enwiki-20200101-train/')
+                              default='s3://mosaicml-internal-dataset-enwiki-20200101/')
     local: str = hp.optional('Local filesystem directory where dataset is cached during operation',
                              default='/tmp/mds-cache/mds-enwiki-20200101-train/')
-    # split: str = hp.optional('What split of the dataset to use. Either `train` or `val`.', default='train')
+    split: str = hp.optional('What split of the dataset to use. Either `train` or `val`.', default='train')
     tokenizer_name: str = hp.optional('The name of the HuggingFace tokenizer to preprocess text with.',
                                       default='bert-large-uncased')
     max_seq_len: int = hp.optional('The max sequence length of each token sample.', default=512)
@@ -48,10 +50,12 @@ class StreamingWikiHparams(DatasetHparams):
         'How to group text samples into token samples. Currently only `truncate` is supported.', default='truncate')
     mlm: bool = hp.optional('Whether or not to use masked language modeling.', default=False)
     mlm_probability: float = hp.optional('If `mlm==True`, the probability that tokens are masked.', default=0.15)
+    max_retries: int = hp.optional('Number of download re-attempts before giving up.', default=2)
+    timeout: float = hp.optional('How long to wait for shard to download before raising an exception.', default=120)
 
     def validate(self):
-        # if self.split not in ['train', 'val']:
-        #     raise ValueError(f"Unknown split: '{self.split}'")
+        if self.split not in ['train', 'val']:
+            raise ValueError(f"Unknown split: '{self.split}'")
         if self.tokenizer_name is None:
             raise ValueError(f"Must provide 'tokenizer_name'")
         if self.max_seq_len is None or self.max_seq_len <= 0:
@@ -70,11 +74,13 @@ class StreamingWikiHparams(DatasetHparams):
         # Get StreamingWiki dataset
         dataset = StreamingWiki(remote=self.remote,
                                 local=self.local,
-                                # split=self.split,
+                                split=self.split,
                                 shuffle=self.shuffle,
                                 tokenizer_name=self.tokenizer_name,
                                 max_seq_len=self.max_seq_len,
                                 group_method=self.group_method,
+                                max_retries=self.max_retries,
+                                timeout=self.timeout,
                                 batch_size=batch_size)
 
         # Get collate_fn

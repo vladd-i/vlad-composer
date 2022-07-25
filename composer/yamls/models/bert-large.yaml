@@ -8,9 +8,9 @@ model:
 # Train the model on the English C4 corpus
 train_dataset:
   streaming_wiki:
-    remote: s3://mosaicml-internal-dataset-enwiki-20200101/train/
+    remote: s3://mosaicml-internal-dataset-enwiki-20200101/
     local: /tmp/mds-cache/mds-wiki/
-    # split: train # not used for BERT MLPerf because separate folders
+    split: train
     shuffle: true
     tokenizer_name: bert-large-uncased
     max_seq_len: 512
@@ -32,9 +32,9 @@ evaluators:
     label: bert_pre_training
     eval_dataset:
       streaming_wiki:
-        remote: s3://mosaicml-internal-dataset-enwiki-20200101/val/
+        remote: s3://mosaicml-internal-dataset-enwiki-20200101/
         local: /tmp/mds-cache/mds-wiki/
-        # split: val
+        split: val
         shuffle: false
         tokenizer_name: bert-large-uncased
         max_seq_len: 512
