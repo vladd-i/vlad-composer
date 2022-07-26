@@ -33,7 +33,7 @@ except ImportError:
     mlperf_available = False
 
 # this callback only supports the following options:
-BENCHMARKS = ('resnet',)
+BENCHMARKS = ('resnet', 'bert')
 DIVISIONS = ('open',)
 STATUS = ('onprem', 'cloud', 'preview')
 
@@ -108,7 +108,7 @@ class MLPerfCallback(Callback):
         root_folder (str): The root submission folder
         index (int): The repetition index of this run. The filename created will be
             ``result_[index].txt``.
-        benchmark (str, optional): Benchmark name. Currently only ``resnet`` supported.
+        benchmark (str, optional): Benchmark name.
             Default: ``'resnet'``.
         target (float, optional): The target metric before the mllogger marks the stop
             of the timing run. Default: ``0.759`` (resnet benchmark).
